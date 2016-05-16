@@ -15,6 +15,7 @@ ELF=main.elf
 CONVERTER=avr-objcopy
 CONVFLAGS=-O ihex -R .eeprom
 HEX=main.hex
+INSTALLPATH=../out
 
 INSTALLER=avrdude
 IFLAGS=-c arduino -p ATMEGA328P -b 115200 -P
@@ -26,6 +27,7 @@ $(ODIR)/%.o: %.c $(DEPS)
 all: $(OBJ)
 	$(CC) -o $(ELF) $^ $(CFLAGS) $(LIBS)
 	$(CONVERTER) $(CONVFLAGS) $(ELF) $(HEX)
+	cp $(HEX) $(INSTALLPATH)
 
 install:
 	$(INSTALLER) $(IFLAGS) $(PORT) -U flash:w:$(HEX)

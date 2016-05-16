@@ -10,7 +10,7 @@ _OBJ=rs232.o signalHandler.o dataLogger.o
 OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))
 
 EXE=dataLogger.exe
-INSTALLPATH=/usr/local/bin
+INSTALLPATH=../out
 
 LLIBS=-lpthread
 LIBS=-pthread
@@ -23,9 +23,8 @@ $(ODIR)/%.o: %.cpp $(DEPS)
 
 all: $(OBJ)
 	$(CC) -o $(EXE) $^ $(CFLAGS) $(LIBS)
+	cp $(EXE) $(INSTALLPATH)
 
 clean:
 	rm -f $(ODIR)/*.o *~  core $(EXE)
 
-install:
-	cp $(EXE) $(INSTALLPATH)
