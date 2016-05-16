@@ -24,7 +24,7 @@ void dataTransmission(	Operation_e operation,
 						unsigned int numberOfBytes){
 	unsigned char firstByte = registerAddress;
 	int i = 0;
-	
+
 	switch (operation) {
 		case READ:
 			firstByte |= 0x80;
@@ -35,13 +35,13 @@ void dataTransmission(	Operation_e operation,
 		default: // should not get here
 			break;
 	}
-	
+
 	if (numberOfBytes > 1) {
 		firstByte |= 0x40;
 	} else {
 		firstByte &= ~0x40;
 	}
-	
+
 	spi_toggleCS(false);
 	spi_transmission(firstByte);
 	for (i = 0; i < numberOfBytes; i++) {
@@ -67,7 +67,7 @@ unsigned char getDeviceID() {
 void adxl_init(OutputDataRate_e outputDataRate, unsigned int watermark) {
 	unsigned char dataArray[2] = {0};
 	unsigned char dataByte = 0x80 + watermark; // FIFO is in stream mode
-		
+
 	dataArray[0] = outputDataRate; // set data rate in BW_RATE
 	dataArray[1] = 0x08; // set Measure bit in POWER_CTL
 	dataTransmission(WRITE, BW_RATE, dataArray, 2);
@@ -95,7 +95,7 @@ void dumpFifo(unsigned int numberOfDataValues) {
 	int z = 0;
 	int i = 0;
 	char tmp[32] = {0};
-	
+
 	for (i = 0; i < numberOfDataValues; i++) {
 		dataTransmission(READ, DATAX0, dataArray, 6);
 		x = (dataArray[1] & 0x03) << 8 + dataArray[0];
@@ -113,15 +113,17 @@ void dumpFifo(unsigned int numberOfDataValues) {
 
 int main() {
 	unsigned int numberOfDataValues = 0;
-		
-	spi_init(MASTER);
+
+	_delay_ms(10);
+	
 	usart_init();
+	spi_init(MASTER);
 	if (getDeviceID() != 0xE5) {
 		usart_sendString("ERROR: wrong device ID. Check connections.\r\n");
 		exit(1);
 	}
 	adxl_init(RATE_50Hz, 16);
-	
+
 	while(true) {
 		if (numberOfDataValues = getNumberOfDataValues()) {
 			dumpFifo(numberOfDataValues);

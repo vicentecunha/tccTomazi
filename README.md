@@ -4,7 +4,7 @@
 
 ##### Install avrdude and make
 
-On linux: `sudo apt-get install avrdude make`
+On Linux: `sudo apt-get install avrdude make`
 
 On Windows:
 
@@ -12,7 +12,7 @@ On Windows:
 
 [GnuWin](https://sourceforge.net/projects/gnuwin32/)
 
-##### Install
+##### Upload to device
 
 `make install PORT=COMx`
 

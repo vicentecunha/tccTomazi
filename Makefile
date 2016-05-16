@@ -22,7 +22,7 @@ PORT=COM3
 
 $(ODIR)/%.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)	
-	
+
 all: $(OBJ)
 	$(CC) -o $(ELF) $^ $(CFLAGS) $(LIBS)
 	$(CONVERTER) $(CONVFLAGS) $(ELF) $(HEX)

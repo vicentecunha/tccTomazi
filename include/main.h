@@ -13,11 +13,13 @@
 // INCLUDES
 //========================================================================
 
+#define F_CPU 16000000
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <util/delay.h>
 
 //========================================================================
 // TYPEDEFS
