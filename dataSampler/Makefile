@@ -19,7 +19,7 @@ INSTALLPATH=../out
 
 INSTALLER=avrdude
 IFLAGS=-c arduino -p ATMEGA328P -b 115200 -P
-PORT=COM3
+PORT=/dev/ttyACM0
 
 $(ODIR)/%.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)	

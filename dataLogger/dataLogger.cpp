@@ -27,7 +27,7 @@ bool openPort(uint8_t serialPortNumber, uint32_t baudrate) {
 }
 
 int main() {
-	const int baudrate = 9600;
+	const int baudrate = 115200; // Change this value as needed.
 	
 	cerr << "Serial port number: ";
 	int serialPortNumber;
@@ -61,7 +61,7 @@ int main() {
 			this_thread::sleep_for(chrono::milliseconds(1));
 		}
 		
-		cout << " ... kill signal detected." << endl;
+		cout << " ... kill signal detected. Exiting dataLogger." << endl;
 		logFile.flush();
 		logFile.close();
 		exit(EXIT_SUCCESS);

@@ -62,14 +62,15 @@ unsigned char getDeviceID() {
 
 /*
  *	Configure the ADXL for this application.
+ *	BW_RATE = normal operation
+ *	POWER_CTL = measurement mode
+ *	INT_ENABLE = enable Overrun INT1
+ *	FIFO_CTL = Stream mode
  */
 
-void adxl_init(OutputDataRate_e outputDataRate, unsigned int watermark) {
-	unsigned char dataArray[2] = {0};
-	unsigned char dataByte = 0x80 + watermark; // FIFO is in stream mode
-
-	dataArray[0] = outputDataRate; // set data rate in BW_RATE
-	dataArray[1] = 0x08; // set Measure bit in POWER_CTL
+void adxl_init(OutputDataRate_e outputDataRate) {
+	unsigned char dataArray[3] = {outputDataRate, 0x08, 0x01};
+	unsigned char dataByte = 0x80; // FIFO is in stream mode
 	dataTransmission(WRITE, BW_RATE, dataArray, 2);
 	dataTransmission(WRITE, FIFO_CTL, &dataByte, 16);
 }
@@ -107,6 +108,23 @@ void dumpFifo(unsigned int numberOfDataValues) {
 	}
 }
 
+/*
+ *	Configure external interrupt 0 to trigger on rising edge.
+ */
+
+interruptsInit() {
+	EICRA = 0x03; // The rising edge of INT0 generates an interrupt request.
+	EIMSK = 0x01; //  External Interrupt Request 0 Enables
+}
+
+/*
+ *	External Interrupt 0: Overrun
+ */
+
+ISR(INT0_vect) {
+	usart_sendString("WARNING: FIFO overrun. Data samples were lost\r\nTry increasing baudrate or lowering sampling frequency.\r\nIf this does not solve the issue, send data in binary mode.\r\n");
+}
+
 //========================================================================
 // MAIN (super-loop architecture)
 //========================================================================
@@ -122,8 +140,10 @@ int main() {
 		usart_sendString("ERROR: wrong device ID. Check connections.\r\n");
 		exit(1);
 	}
-	adxl_init(RATE_50Hz, 16);
+	adxl_init(RATE_50Hz);
 
+	interruptsInit();
+	sei(); // enable global interrupts
 	while(true) {
 		if (numberOfDataValues = getNumberOfDataValues()) {
 			dumpFifo(numberOfDataValues);

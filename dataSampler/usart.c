@@ -7,7 +7,7 @@
 //========================================================================
 
 #define FOSC 16000000UL	// Clock Speed
-#define BAUD 9600UL		// baudrate
+#define BAUD 115200UL	// baudrate
 #define DOUBLE_SPEED	// Asynchronous Double Speed mode
 
 #ifdef DOUBLE_SPEED
