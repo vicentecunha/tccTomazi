@@ -18,7 +18,8 @@
 
 using namespace std;
 
-bool openPort(uint8_t serialPortNumber, uint32_t baudrate) {
+bool openPort(uint8_t serialPortNumber, uint32_t baudrate)
+{
 	char config[] = "8N1";	
 	if (RS232_OpenComport(serialPortNumber, baudrate, config))
 		return false;
@@ -26,15 +27,19 @@ bool openPort(uint8_t serialPortNumber, uint32_t baudrate) {
 		return true;
 }
 
-int main() {
+int main()
+{
 	const int baudrate = 115200; // Change this value as needed.
+	
+	cerr << "Starting dataLogger." << endl;
 	
 	cerr << "Serial port number: ";
 	int serialPortNumber;
 	cin >> serialPortNumber;
 
 	cerr << "Opening serial port " << serialPortNumber << " (COM" << serialPortNumber+1 << ")." << endl;
-	if(!openPort(serialPortNumber, baudrate)) {
+	if(!openPort(serialPortNumber, baudrate))
+	{
 		exit(EXIT_FAILURE);
 	}
 	
@@ -44,15 +49,27 @@ int main() {
 	ofstream logFile;
 	logFile.open(filename, ios::out);
 	
+	cerr << "Press CTRL+Z at any time to print a stamp line to logFile." << endl;
+	
 	uint8_t rxBuffer[4096];
-	try {
+	try
+	{
 		SignalHandler signalHandler;
 		signalHandler.setupSignalHandlers();
 		
-		while(!signalHandler.gotExitSignal()){
-			if (int numberOfReceivedBytes = RS232_PollComport(serialPortNumber, rxBuffer, 4096)) {
-				for (uint16_t i = 0; i < numberOfReceivedBytes; i++) {
-					cout << rxBuffer[i];
+		while(!signalHandler.gotExitSignal())
+		{	
+			if (signalHandler.gotStampSignal())
+			{
+				signalHandler.setStampSignal(false);
+				cout    << "========== User Stamp ==========" << endl;
+				logFile << "========== User Stamp ==========" << endl;
+			}
+			if (int numberOfReceivedBytes = RS232_PollComport(serialPortNumber, rxBuffer, 4096))
+			{
+				for (uint16_t i = 0; i < numberOfReceivedBytes; i++)
+				{
+					cout    << rxBuffer[i];
 					logFile << rxBuffer[i];
 					rxBuffer[i] = '\0';
 				}
@@ -65,8 +82,9 @@ int main() {
 		logFile.flush();
 		logFile.close();
 		exit(EXIT_SUCCESS);
-		
-	} catch (SignalException& e) {
+	}
+	catch (SignalException& e)
+	{
 		std::cerr << "SignalException: " << e.what() << std::endl;
 	    exit(EXIT_FAILURE);
 	}

@@ -15,16 +15,19 @@ class SignalHandler
 {
 protected:
     static bool mbGotExitSignal;
+	static bool mbGotStampSignal;
 
 public:
     SignalHandler();
     ~SignalHandler();
 
     static bool gotExitSignal();
+	static bool gotStampSignal();
     static void setExitSignal(bool _bExitSignal);
-
+	static void setStampSignal(bool _bStampSignal);
+	
     void        setupSignalHandlers();
     static void exitSignalHandler(int _ignored);
-
+	static void stampSignalHandler(int _ignored);
 };
 #endif
